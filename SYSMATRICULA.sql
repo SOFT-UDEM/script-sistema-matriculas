@@ -23,7 +23,7 @@ IF EXISTS (SELECT * FROM SYS.DATABASES WHERE NAME='BDDSISTEMA')
 		Apellido varchar(65),
 		carnet varchar(65),
 		IdCarrera int,
-		AñoCursado varchar(8),
+		AnioCursado varchar(8),
 		address1 varchar(100),
 		Fecha_nac datetime,
 		Genero varchar (8),
