@@ -106,7 +106,7 @@ CREATE PROCEDURE SpAlumno
 AS
 BEGIN
 	BEGIN TRY
-	--Validar tipo de operaci髇 "I" es INSERT
+	--Validar tipo de operaci贸n "I" es INSERT
 	IF (@W_Operacion = 'I')
 	BEGIN
 		INSERT INTO BDDSISTEMA..ALUMNO
@@ -144,7 +144,7 @@ BEGIN
 		SELECT @O_Mensaje = 'SE HA INSERTADO CORRECTAMENTE EN LA TABLA ALUMNO.'
 	END
 	--fin de isertado.
-	--Validar tipo de operaci髇 "U" es UPDATE
+	--Validar tipo de operaci贸n "U" es UPDATE
 	IF (@W_Operacion = 'U')
 	BEGIN
 		UPDATE BDDSISTEMA..ALUMNO 
@@ -165,14 +165,14 @@ BEGIN
 			SELECT @O_Mensaje = 'SE HA ACTUALIZADO CORRECTAMENTE UN REGISTRO DE LA TABLA ALUMNO.'
 	END
 	--fin de actualizado.
-	--Validar tipo de operaci髇 "S" es SELECT.
+	--Validar tipo de operaci贸n "S" es SELECT.
 	IF (@W_Operacion = 'S')
 	BEGIN
 		SELECT Cod_alumno, Nam_alumno, Apellido, IdCarrera, AnioCursado, address1, Fecha_nac, Genero, num_matricula, tutor, CedulAlumn, CelAlumn, telAlumn, carnet FROM BDDSISTEMA..ALUMNO
 		SELECT @O_Mensaje = 'SE REALIZO UN SELECT CORRECTAMENTE A LA TABLA ALUMNO.'
 	END
 	--fin de select.
-	--Validar tipo de operaci髇 "D" es DELETE.
+	--Validar tipo de operaci贸n "D" es DELETE.
 	IF (@W_Operacion = 'D')
 	BEGIN
 		DELETE BDDSISTEMA..ALUMNO WHERE Cod_alumno = @Cod_alumno
@@ -187,3 +187,80 @@ BEGIN
 END
 GO
 --FIN SP de la tabla Alumno.
+
+--Procedimiento para la tabla carrera
+
+
+CREATE TABLE CARRERA
+	( Cod_carrera int primary key identity,
+		desc_carrera varchar(200),
+		Nam_carrera varchar(65),
+		IdCarrera int foreign key(IdCarrera) references FACULTAD(Idfacultad))
+		
+		
+CREATE PROCEDURE SpAlumno
+(
+	--Parametros o variables de entrada INPUT, identicos a los de la tabla Alumno.
+	@Cod_carrera int,
+	@desc_carrera varchar(200),
+	@Nam_carrera varchar(65),
+	@W_Operacion varchar(10),
+	@O_Mensaje varchar(255) OUTPUT
+)
+AS
+BEGIN
+	BEGIN TRY
+	--Validar tipo de operaci贸n "I" es INSERT
+	IF (@W_Operacion = 'I')
+	BEGIN
+		INSERT INTO BDDSISTEMA..ALUMNO
+		(
+			Cod_carrera,
+			desc_carrera,
+			Nam_carrera
+		)
+		VALUES
+		(
+			@Cod_carrera,
+			@desc_carrera,
+			@Nam_carrera
+		)
+		SELECT @O_Mensaje = 'SE HA INSERTADO CORRECTAMENTE EN LA TABLA CARRERA.'
+	END
+	--fin de isertado.
+	--Validar tipo de operaci贸n "U" es UPDATE
+	IF (@W_Operacion = 'U')
+	BEGIN
+		UPDATE BDDSISTEMA..ALUMNO 
+			SET
+				,
+				desc_carrera=@desc_carrera,
+				Nam_carrera=@Nam_carrera				
+				WHERE Cod_carrera = @Cod_carrera
+			SELECT @O_Mensaje = 'SE HA ACTUALIZADO CORRECTAMENTE UN REGISTRO DE LA TABLA CARRERA.'
+	END
+	--fin de actualizado.
+	--Validar tipo de operaci贸n "S" es SELECT.
+	IF (@W_Operacion = 'S')
+	BEGIN
+		SELECT Cod_carrera,
+			desc_carrera,
+			Nam_carrera
+			FROM BDDSISTEMA..ALUMNO
+		SELECT @O_Mensaje = 'SE REALIZO UN SELECT CORRECTAMENTE A LA TABLA CARRERA.'
+	END
+	--fin de select.
+	--Validar tipo de operaci贸n "D" es DELETE.
+	IF (@W_Operacion = 'D')
+	BEGIN
+		DELETE BDDSISTEMA..ALUMNO WHERE Cod_carrera = @Cod_carrera
+		SELECT @O_Mensaje = 'SE HA ELIMINADO UN REGISTRO DE LA TABLA CARRERA.'
+	END
+	--fin de delete.
+	END TRY
+	BEGIN CATCH
+		-- Si ocurrio un error lo notificamos.
+		SELECT @O_Mensaje = 'ERROR: ' + ERROR_MESSAGE() + 'EN LINEA: ' + CONVERT(VARCHAR, ERROR_LINE() )
+	END CATCH
+END
+GO
