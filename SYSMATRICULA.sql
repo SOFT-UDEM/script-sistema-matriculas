@@ -47,18 +47,19 @@ IF EXISTS (SELECT * FROM SYS.DATABASES WHERE NAME='BDDSISTEMA')
 			Nam_materia varchar(30),
 			cuatimestre int)
 
-	CREATE TABLE PROFESOR
-		(apellprof varchar(45),
-			IdMateria int foreign key(IdMateria) references MATERIA(cod_materia),
-			cod_profesor int primary key identity,
-			Dom_Prof varchar(200),
-			FecNac_Prof datetime,
-			Gradprof varchar(30),
-			grupo varchar(6),
-			Nam_profesor varchar(30),
-			CedProf varchar(16),
-			CelProf varchar(8),
-			TelProf varchar(8))
+CREATE TABLE PROFESOR (
+	Nam_profesor varchar(30),
+	apellprof varchar(45),
+	IdMateria int foreign key(IdMateria) references MATERIA(cod_materia),
+	cod_profesor int primary key identity,
+	Dom_Prof varchar(200),
+	FecNac_Prof datetime,
+	Gradprof varchar(30),
+	grupo varchar(6),
+	CedProf varchar(16),
+	CelProf varchar(8),
+	TelProf varchar(8)
+)
 
 	CREATE TABLE CAJA
 		(IdCarrera int foreign key(IdCarrera) references CARRERA(Cod_carrera),
@@ -247,6 +248,112 @@ BEGIN
 	BEGIN
 		DELETE BDDSISTEMA..CARRERA WHERE Cod_carrera = @Cod_carrera
 		SELECT @O_Mensaje = 'SE HA ELIMINADO UN REGISTRO DE LA TABLA CARRERA.'
+	END
+	--fin de delete.
+	END TRY
+	BEGIN CATCH
+		-- Si ocurrio un error lo notificamos.
+		SELECT @O_Mensaje = 'ERROR: ' + ERROR_MESSAGE() + 'EN LINEA: ' + CONVERT(VARCHAR, ERROR_LINE() )
+	END CATCH
+END
+GO
+--Fin procedimiento almacenado SpCarrera.
+
+--Procedimiento para la tabla carrera
+CREATE PROCEDURE SpProfesor
+(
+	--Parametros o variables de entrada INPUT, identicos a los de la tabla Profesor.
+	@Nam_profesor varchar(30),
+	@apellprof varchar(45),
+	@IdMateria int,
+	@cod_profesor int,
+	@Dom_Prof varchar(200),
+	@FecNac_Prof datetime,
+	@Gradprof varchar(30),
+	@grupo varchar(6),
+	@CedProf varchar(16),
+	@CelProf varchar(8),
+	@TelProf varchar(8),
+	@W_Operacion varchar(10),
+	@O_Mensaje varchar(255) OUTPUT
+)
+AS
+BEGIN
+	BEGIN TRY
+	--Validar tipo de operación "I" es INSERT
+	IF (@W_Operacion = 'I')
+	BEGIN
+		INSERT INTO BDDSISTEMA..PROFESOR
+		(
+			Nam_profesor,
+			apellprof,
+			IdMateria,
+			Dom_Prof,
+			FecNac_Prof,
+			Gradprof,
+			grupo,
+			CedProf,
+			CelProf,
+			TelProf
+		)
+		VALUES
+		(
+			@Nam_profesor,
+			@apellprof,
+			@IdMateria,
+			@Dom_Prof,
+			@FecNac_Prof,
+			@Gradprof,
+			@grupo,
+			@CedProf,
+			@CelProf,
+			@TelProf
+		)
+		SELECT @O_Mensaje = 'SE HA INSERTADO CORRECTAMENTE EN LA TABLA PROFESOR.'
+	END
+	--fin de isertado.
+	--Validar tipo de operación "U" es UPDATE
+	IF (@W_Operacion = 'U')
+	BEGIN
+		UPDATE BDDSISTEMA..PROFESOR 
+			SET
+				Nam_profesor = @Nam_profesor,
+				apellprof = @apellprof,
+				IdMateria = @IdMateria,
+				Dom_Prof = @Dom_Prof,
+				FecNac_Prof = @FecNac_Prof,
+				Gradprof = @Gradprof,
+				grupo = @grupo,
+				CedProf = @CedProf,
+				CelProf = @CelProf,
+				TelProf = @TelProf
+				WHERE cod_profesor = @cod_profesor
+			SELECT @O_Mensaje = 'SE HA ACTUALIZADO CORRECTAMENTE UN REGISTRO DE LA TABLA PROFESOR.'
+	END
+	--fin de actualizado.
+	--Validar tipo de operación "S" es SELECT.
+	IF (@W_Operacion = 'S')
+	BEGIN
+		SELECT Nam_profesor, 
+				apellprof, 
+				IdMateria, 
+				cod_profesor, 
+				Dom_Prof, 
+				FecNac_Prof, 
+				Gradprof, 
+				grupo, 
+				CedProf, 
+				CelProf, 
+				TelProf			
+			FROM BDDSISTEMA..PROFESOR
+		SELECT @O_Mensaje = 'SE REALIZO UN SELECT CORRECTAMENTE A LA TABLA PROFESOR.'
+	END
+	--fin de select.
+	--Validar tipo de operación "D" es DELETE.
+	IF (@W_Operacion = 'D')
+	BEGIN
+		DELETE BDDSISTEMA..PROFESOR WHERE cod_profesor = @cod_profesor
+		SELECT @O_Mensaje = 'SE HA ELIMINADO UN REGISTRO DE LA TABLA PROFESOR.'
 	END
 	--fin de delete.
 	END TRY
