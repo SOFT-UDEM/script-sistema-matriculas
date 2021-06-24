@@ -80,6 +80,8 @@ IF EXISTS (SELECT * FROM SYS.DATABASES WHERE NAME='BDDSISTEMA')
 			IdAlumno int foreign key(IdAlumno) references ALUMNO(Cod_alumno),
 			IdProfesor int foreign key(IdProfesor) references PROFESOR(Cod_Profesor))
 
+	GO
+
 
 --Creando procedimiento almacenado de la tabla ALUMNO.
 CREATE PROCEDURE SpAlumno
@@ -189,16 +191,7 @@ GO
 --FIN SP de la tabla Alumno.
 
 --Procedimiento para la tabla carrera
-
-
-CREATE TABLE CARRERA
-	( Cod_carrera int primary key identity,
-		desc_carrera varchar(200),
-		Nam_carrera varchar(65),
-		IdCarrera int foreign key(IdCarrera) references FACULTAD(Idfacultad))
-		
-		
-CREATE PROCEDURE SpAlumno
+CREATE PROCEDURE SpCarrera
 (
 	--Parametros o variables de entrada INPUT, identicos a los de la tabla Alumno.
 	@Cod_carrera int,
@@ -213,7 +206,7 @@ BEGIN
 	--Validar tipo de operación "I" es INSERT
 	IF (@W_Operacion = 'I')
 	BEGIN
-		INSERT INTO BDDSISTEMA..ALUMNO
+		INSERT INTO BDDSISTEMA..CARRERA
 		(
 			Cod_carrera,
 			desc_carrera,
@@ -231,9 +224,8 @@ BEGIN
 	--Validar tipo de operación "U" es UPDATE
 	IF (@W_Operacion = 'U')
 	BEGIN
-		UPDATE BDDSISTEMA..ALUMNO 
+		UPDATE BDDSISTEMA..CARRERA 
 			SET
-				,
 				desc_carrera=@desc_carrera,
 				Nam_carrera=@Nam_carrera				
 				WHERE Cod_carrera = @Cod_carrera
@@ -246,14 +238,14 @@ BEGIN
 		SELECT Cod_carrera,
 			desc_carrera,
 			Nam_carrera
-			FROM BDDSISTEMA..ALUMNO
+			FROM BDDSISTEMA..CARRERA
 		SELECT @O_Mensaje = 'SE REALIZO UN SELECT CORRECTAMENTE A LA TABLA CARRERA.'
 	END
 	--fin de select.
 	--Validar tipo de operación "D" es DELETE.
 	IF (@W_Operacion = 'D')
 	BEGIN
-		DELETE BDDSISTEMA..ALUMNO WHERE Cod_carrera = @Cod_carrera
+		DELETE BDDSISTEMA..CARRERA WHERE Cod_carrera = @Cod_carrera
 		SELECT @O_Mensaje = 'SE HA ELIMINADO UN REGISTRO DE LA TABLA CARRERA.'
 	END
 	--fin de delete.
